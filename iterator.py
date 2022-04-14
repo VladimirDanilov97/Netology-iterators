@@ -1,11 +1,11 @@
 import time
 
-from numpy import inner 
+
 nested_list = [
 	['a', 'b', 'c'],
 	['d', 'e', 'f', 'h', False],
 	[1, 2, None],
-    
+    [[5, 6], [[7,8,[9]],2]]
 ]
 
 class MyIterator():
@@ -30,12 +30,21 @@ class MyIterator():
                 self.iterator = self.nested_list[self.index].__iter__()
                 return next(self)
 
-def my_generator(nested_list):
-    for list_ in nested_list:
-        for item in list_:
-            yield item 
 
+def generator(nested_list):
+    for list_ in nested_list:
+        if isinstance(list_, list):
+            for item in list_:
+                if isinstance(item, list):
+                    for j in generator(list_):
+                        yield j
+                else:
+                    yield item
+        else:
+            yield list_
 iterator = MyIterator(nested_list)
-generator = my_generator(nested_list)
-for i,j in zip(iterator, generator):
-    print(f'{i}; {j};')
+g = generator(nested_list)
+for i in g:
+    print(i)
+# for i,j in zip(iterator, generator):
+#     print(f'{i}; {j};')
